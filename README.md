@@ -66,8 +66,8 @@ Follow these steps to set up the project locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/repositoryname.git
-cd repositoryname
+git clone https://github.com/mizdalj/cryptography.git
+cd cryptography
 ```
 
 ### 2. Create and Activate Virtual Environment
@@ -96,4 +96,4 @@ pip install -r requirements.txt
 
 ---
 
-*Made with ❤️ and a lot of ☕. Stay curious and keep learning!*
+*Made with ❤️, GPT and a lot of ☕. Stay curious and keep learning!*
