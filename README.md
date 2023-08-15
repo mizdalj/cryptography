@@ -37,7 +37,9 @@ illustrating each step of the process in a clear and understandable manner.
 Here are some resources and references used during the development of these algorithms:
 
 - *What Is AES Encryption and How Does It Work?*  https://www.simplilearn.com/tutorials/cryptography-tutorial/aes-encryption
+- *Advanced Encryption Standard*  https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard
 - *AES Explained (Advanced Encryption Standard) - Computerphile*  https://www.youtube.com/watch?v=O4xNJsjtN6E
+- *AES Encryption*  https://asecuritysite.com/subjects/chapter88
 
 ## 🤝 Contributing
 

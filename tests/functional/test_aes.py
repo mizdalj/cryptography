@@ -1,7 +1,5 @@
 import pytest
-from src.algorithms.symmetric import aes
-
-
+from src.benchmark.symmetric import aes_benchmark
 def test_aes_encryption_decryption():
     # Plain text for testing
     plain_text = "This is a test message!"
@@ -11,13 +9,13 @@ def test_aes_encryption_decryption():
     key = "Sixteen byte key"
 
     # Encrypt
-    encrypted_text = aes.encrypt(plain_text, key)
+    encrypted_text = aes_benchmark.encrypt(plain_text, key)
 
     # Ensure the encrypted text is not same as plain text
     assert encrypted_text != plain_text
 
     # Decrypt
-    decrypted_text = aes.decrypt(encrypted_text, key)
+    decrypted_text = aes_benchmark.decrypt(encrypted_text, key)
 
     # Ensure the decrypted text is same as original plain text
     assert decrypted_text == plain_text
