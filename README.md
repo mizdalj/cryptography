@@ -36,13 +36,16 @@ illustrating each step of the process in a clear and understandable manner.
 
 Here are some resources and references used during the development of these algorithms:
 
-- *TBD*
+- *What Is AES Encryption and How Does It Work?*  https://www.simplilearn.com/tutorials/cryptography-tutorial/aes-encryption
+- *AES Explained (Advanced Encryption Standard) - Computerphile*  https://www.youtube.com/watch?v=O4xNJsjtN6E
 
 ## 🤝 Contributing
 
 While this project is primarily for personal exploration, contributions in the form of corrections, optimizations, or
 explanations are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the
 process for submitting pull requests.
+
+For contributing or understanding the project structure, please read the [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## ✍️ Authors
 
@@ -51,6 +54,41 @@ process for submitting pull requests.
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## 🛠 Setup and Installation
+
+Follow these steps to set up the project locally.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/repositoryname.git
+cd repositoryname
+```
+
+### 2. Create and Activate Virtual Environment
+
+- **On macOS and Linux:**
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+- **On Windows:**
+```cmd
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Project
+
+*Provide instructions on how to run the algorithms or any related scripts here.*
 
 ---
 

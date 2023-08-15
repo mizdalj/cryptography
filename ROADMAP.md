@@ -1,59 +1,79 @@
 # Cryptographic Algorithms Implementation Roadmap
 
-Implementing cryptographic algorithms from scratch can be an excellent way to dive deep into the mathematics and intricacies of encryption. Here's a suggested roadmap to guide your project.
+Implementing cryptographic algorithms from scratch offers a comprehensive exploration into the mathematics and intricacies of encryption. This roadmap provides guidance on how to systematically approach and realize such a project.
 
 ## Disclaimers
 
-- This implementation is for **educational purposes** only and should not be used in security-critical applications.
-- Implementations in popular libraries like OpenSSL have undergone rigorous audits and optimizations. They should be preferred for real-world applications.
+- The provided implementations are solely for educational objectives. They are not designed for deployment in security-sensitive applications.
+  
+- Well-established libraries, such as OpenSSL, are recommended for real-world applications due to their rigorous audits and optimizations.
 
-## 1. Understand the Mathematics
+## 1. Mathematical Foundations
 
-Start by delving deep into the mathematical foundations of the algorithms you aim to implement. For instance:
-- Modular arithmetic for RSA
-- Group theory for elliptic curves
+Before diving into the actual coding, one must understand the mathematical principles that underlie cryptographic algorithms. For example:
 
-## 2. Choose Symmetric Algorithms
+- **Modular Arithmetic**: Vital for RSA.
+  
+- **Group Theory**: Essential for understanding elliptic curves.
 
-Start with simpler symmetric ciphers to get a hang of the encryption process:
-- **AES (Rijndael)**
-- **DES** (outdated but simpler for learning)
-- **Blowfish or Twofish**
+## 2. Symmetric Algorithms Selection
 
-## 3. Choose Asymmetric Algorithms
+Begin with basic symmetric ciphers to familiarize yourself with the encryption process:
 
-Move on to more complex public-key systems:
-- **RSA**
-- **DSA or ECDSA** for digital signatures
-- **Diffie-Hellman** for key exchange
-- **Elliptic-curve variants** like Curve25519 for modern encryption methods
+- **AES (Rijndael)**: A widely adopted cipher.
+  
+- **DES**: Although outdated, its simplicity aids learning.
+  
+- **Blowfish or Twofish**: Other symmetric ciphers worth exploring.
 
-## 4. Choose Hashing Algorithms
+## 3. Asymmetric Algorithms Selection
 
-- **SHA-256**
-- **MD5** (primarily for educational value; it's outdated and has vulnerabilities)
-- **SHA-3**
+Proceed to the intricacies of public-key systems:
 
-## 5. Coding
+- **RSA**: A commonly used public-key cryptosystem.
+  
+- **DSA or ECDSA**: Useful for digital signatures.
+  
+- **Diffie-Hellman**: Pertinent for key exchanges.
+  
+- **Elliptic-curve variants**: Like Curve25519 for contemporary encryption techniques.
 
-- Begin with **Test-Driven Development (TDD)**. Write unit tests before the actual implementation.
-- Implement the algorithm.
-- Compare and validate results with established libraries (like OpenSSL) for correctness.
+## 4. Hashing Algorithms Selection
+
+Choose from several hashing algorithms, including:
+
+- **SHA-256**: A standard cryptographic hash function.
+  
+- **MD5**: Though outdated and vulnerable, it provides educational insights.
+  
+- **SHA-3**: A member of the latest cryptographic hash functions.
+
+## 5. Coding Process
+
+- **Test-Driven Development (TDD)**: Begin by writing unit tests ahead of the actual implementation. This ensures functionality and aids debugging.
+  
+- **Implementation**: Craft the core algorithm.
+  
+- **Validation**: Cross-check results with renowned libraries (e.g., OpenSSL) to ensure accuracy.
 
 ## 6. Optimization (Optional)
 
-If you're feeling ambitious:
-- Optimize your initial implementation.
-- Consider low-level performance improvements, though this isn't the main focus.
+For enthusiasts seeking further challenge:
 
-## 7. Documentation and Showcase
+- Fine-tune the initial codes.
+  
+- Delve into low-level performance enhancements. However, remember that the primary goal is understanding, not performance.
 
-- Write clear and comprehensive comments.
-- Document the mathematical foundations, algorithm steps, and your implementation nuances.
-- Showcase your work on GitHub with:
-  - A well-structured README
-  - Clear project purpose and scope
-  - Disclaimers, especially emphasizing the educational intent
+## 7. Documentation and Presentation
 
-Remember to always clarify that these implementations are meant for demonstration and learning, not real-world security applications.
+- **Commenting**: Embed clear and detailed comments in your code.
+  
+- **Documentation**: Detail the mathematical foundations, algorithmic steps, and unique aspects of your implementation.
+  
+- **Showcasing on GitHub**: A structured README, a well-defined project objective and scope, and disclaimers highlighting the educational intent are crucial.
 
+Lastly, it's paramount to reiterate that these implementations are tailored for educational purposes. They are not recommended for actual security applications.
+
+--- 
+
+This structure should provide a clear and organized view of the roadmap, making it easy for readers to follow.
