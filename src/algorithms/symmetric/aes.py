@@ -24,6 +24,8 @@ sbox = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67,
         0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0,
         0x54, 0xbb, 0x16]
 
+sbox2d = [sbox[i:i + 16] for i in range(0, len(sbox), 16)]
+
 # Rijndael Inverted S-box
 rsbox = [0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3,
          0x9e, 0x81, 0xf3, 0xd7, 0xfb, 0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f,
@@ -59,4 +61,232 @@ def sub_bytes(state):
             row = state[i][j] // 0x10
             col = state[i][j] % 0x10
             state[i][j] = sbox[16 * row + col]
+    return state
+
+
+def shift_rows(state):
+    """Shift rows of the state for AES encryption."""
+
+    # Row 0 remains unchanged
+    # For clarity, explicitly state the unchanged row, even though it's not necessary
+    state[0] = state[0]
+
+    # Row 1 is shifted left by one byte
+    state[1] = state[1][1:] + state[1][:1]
+
+    # Row 2 is shifted left by two bytes
+    state[2] = state[2][2:] + state[2][:2]
+
+    # Row 3 is shifted left by three bytes
+    state[3] = state[3][3:] + state[3][:3]
+
+    return state
+
+
+def galois_mult(a, b):
+    """Multiplication in GF(2^8)"""
+    p = 0
+    for counter in range(8):
+        if b & 1: p ^= a
+        hi_bit_set = a & 0x80
+        a <<= 1
+        if hi_bit_set: a ^= 0x11b  # Modulo the irreducible polynomial
+        b >>= 1
+    return p & 0xFF
+
+
+def mix_columns(state):
+    """Mix columns step for AES"""
+    fixed_matrix = [
+        [2, 3, 1, 1],
+        [1, 2, 3, 1],
+        [1, 1, 2, 3],
+        [3, 1, 1, 2]
+    ]
+    new_state = [[0 for _ in range(4)] for _ in range(4)]
+
+    for row in range(4):
+        for col in range(4):
+            vals = [
+                galois_mult(fixed_matrix[row][0], state[0][col]),
+                galois_mult(fixed_matrix[row][1], state[1][col]),
+                galois_mult(fixed_matrix[row][2], state[2][col]),
+                galois_mult(fixed_matrix[row][3], state[3][col])
+            ]
+
+            result = 0
+            for v in vals:
+                result ^= v
+
+            new_state[row][col] = result
+
+            # Debug statement
+            print(f"For position [{row}][{col}], Values: {vals[0]}, {vals[1]}, {vals[2]}, {vals[3]}")
+
+    return new_state
+
+
+def add_round_key(state, round_key):
+    """Add the round key to the state."""
+    for i in range(4):
+        for j in range(4):
+            state[j][i] ^= round_key[j][i]
+    return state
+
+
+def key_expansion(key_matrix):
+    def sub_word(word):
+        # Substitute each byte of a word using the S-Box
+        return [sbox2d[ord(byte) // 16][ord(byte) % 16] for byte in word]
+
+    def rot_word(word):
+        # Cyclically permute the bytes of a word
+        return word[1:] + word[:1]
+
+    # AES-128 has 10 rounds, which requires 44 words (including the initial 4 words)
+    # Hence, we expand the 4-word key into a 44-word array
+    num_words = 4  # number of words in the original key
+    num_rounds = 10  # number of rounds for AES-128
+    expanded_key = [0] * (num_words * (num_rounds + 1))
+
+    # The first four words are simply the original key
+    for i in range(num_words):
+        expanded_key[i] = key_matrix[i]
+
+    # Round constants for AES. For AES-128, we need only 10 round constants
+    rcon = [
+        0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36
+    ]
+
+    # Begin the expansion
+    for i in range(num_words, num_words * (num_rounds + 1)):
+        temp = expanded_key[i - 1]
+        if i % num_words == 0:
+            temp = [byte1 ^ byte2 for byte1, byte2 in
+                    zip(sub_word(rot_word(temp)), [rcon[(i // num_words) - 1], 0, 0, 0])]
+        expanded_key[i] = [byte1 ^ byte2 for byte1, byte2 in zip(expanded_key[i - num_words], temp)]
+
+    # Convert the expanded key to matrix form for use in rounds
+    return [expanded_key[i:i + 4] for i in range(0, len(expanded_key), 4)]
+
+
+def encrypt(plain_text, key):
+    # Convert plain_text and key into state matrix format
+    # Here, you might need helper functions that convert string data into the state matrix
+
+    state = to_state_matrix(plain_text)
+    key_matrix = to_state_matrix(key)
+
+    # Key expansion to generate round keys
+    round_keys = key_expansion(key_matrix)
+
+    # Initial round
+    state = add_round_key(state, round_keys[0])
+
+    # Number of rounds depends on the key size
+    num_rounds = 10  # For 128-bit key. Adjust if using other key sizes.
+
+    # Main AES rounds
+    for round_num in range(1, num_rounds + 1):
+        state = sub_bytes(state)
+        state = shift_rows(state)
+
+        # Don't mix columns in the last round
+        if round_num != num_rounds:
+            state = mix_columns(state)
+
+        state = add_round_key(state, round_keys[round_num])
+
+    # Convert the final state matrix back to string format for output
+    encrypted_text = from_state_matrix(state)
+
+    return encrypted_text
+
+
+def to_state_matrix(input_string):
+    """Convert a 16-byte string into a 4x4 state matrix."""
+    if len(input_string) != 16:
+        raise ValueError("Input string must be 16 bytes long")
+
+    state = [[] for _ in range(4)]
+    for column in range(4):
+        for row in range(4):
+            state[row].append(input_string[row + 4 * column])
+    return state
+
+
+def from_state_matrix(matrix):
+    """Convert a 4x4 state matrix back to a 16-byte string."""
+    chars = []
+    for column in range(4):
+        for row in range(4):
+            chars.append(matrix[row][column])
+    return ''.join(chars)
+
+
+def inv_shift_rows(state):
+    """Inverse Shift rows step in AES"""
+    state[1] = state[1][-1:] + state[1][:-1]  # Shift row 1 to the right by 1 byte
+    state[2] = state[2][-2:] + state[2][:-2]  # Shift row 2 to the right by 2 bytes
+    state[3] = state[3][-3:] + state[3][:-3]  # Shift row 3 to the right by 3 bytes
+    return state
+
+
+def inv_sub_bytes(state):
+    """Inverse Sub bytes step in AES"""
+    for i in range(4):
+        for j in range(4):
+            # Replace each byte in the state with its corresponding value in the inverse S-box
+            state[i][j] = inv_s_box_function(state[i][j])
+    return state
+
+
+def inv_s_box_function(byte_value):
+    """Inverse S-box function lookup for a given byte"""
+    # Here, implement the lookup for the inverse S-box
+    # For now, this is just a stub. You'd ideally replace this with a lookup in the inv_S_box table.
+    return byte_value
+
+
+def inv_mix_columns(state):
+    """Inverse Mix columns step in AES"""
+    # Fixed matrix for inverse MixColumns
+    inv_matrix = [
+        [0x0E, 0x0B, 0x0D, 0x09],
+        [0x09, 0x0E, 0x0B, 0x0D],
+        [0x0D, 0x09, 0x0E, 0x0B],
+        [0x0B, 0x0D, 0x09, 0x0E]
+    ]
+
+    new_state = []
+    for i in range(4):
+        new_column = []
+        for j in range(4):
+            val = 0
+            for k in range(4):
+                val ^= galois_mult(inv_matrix[i][k], state[k][j])
+            new_column.append(val)
+        new_state.append(new_column)
+    return new_state
+
+
+def decrypt(ciphertext_matrix, key_matrix):
+    round_keys = key_expansion(key_matrix)
+
+    # Start with the initial round key
+    state = add_round_key(ciphertext_matrix, round_keys[-1])
+
+    # Loop over round keys, from the second-last one to the second one
+    for round_num in range(len(round_keys) - 2, 0, -1):
+        state = inv_shift_rows(state)
+        state = inv_sub_bytes(state)
+        state = add_round_key(state, round_keys[round_num])
+        if round_num > 1:  # Don't apply InvMixColumns in the last round
+            state = inv_mix_columns(state)
+
+    # Final round
+    state = inv_shift_rows(state)
+    state = inv_sub_bytes(state)
+    state = add_round_key(state, round_keys[0])
+
     return state
